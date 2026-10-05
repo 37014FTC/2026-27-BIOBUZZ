@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 
 /*
  * Distance ruler: push the robot by hand from point A to point B and
@@ -80,6 +81,8 @@ public class DistanceRuler extends LinearOpMode {
             telemetry.addData("X", "%.1f in", x);
             telemetry.addData("Y", "%.1f in", y);
             telemetry.addData("Heading", "%.1f deg", pose.getHeading(AngleUnit.DEGREES));
+            telemetry.addData("Turn rate", "%.1f deg/s",
+                    Math.toDegrees(pinpoint.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS)));
             telemetry.addData("DISTANCE A to B", "%.1f in", distance);
             telemetry.update();
         }

@@ -42,40 +42,57 @@ public class Constants {
         c.xPodOffset.set(-1.9685);
         c.yPodOffset.set(-1.1811);
         c.xPodDirection.set(GoBildaPinpointDriver.EncoderDirection.REVERSED);
-        c.yPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        // yPod REVERSED: physical left strafe read as y=-23 in the
+        // 2026-10-05 odometry log — the pod counts backwards. Left = +y.
+        c.yPodDirection.set(GoBildaPinpointDriver.EncoderDirection.REVERSED);
         c.globalDistanceUnit.set(DistanceUnit.INCH);
         c.offsetUnits.set(DistanceUnit.INCH);
     });
 
     // Algorithm — Foresight.
-    // !!! PLACEHOLDER VALUES !!! The structure and field list come from the
-    // Foresight tuner's own code generator, but the numbers are gentle
-    // guesses, NOT tuned for this robot. Run the Foresight tuner in
-    // AutoTune and paste its generated block over this whole lambda.
-    public static ForesightConfig foresightConfig = new ForesightConfig(c -> {
-        Controller primaryTranslationalForward = Controller.proportional(0.03);
-        Controller secondaryTranslationalForward = Controller.proportional(0.015);
-        Controller primaryTranslationalLateral = Controller.proportional(0.02);
-        Controller secondaryTranslationalLateral = Controller.proportional(0.01);
+    // Measured 2026-10-04 via the step-by-step Foresight Steps tuner
+    // (hard floor, hallway). headingKP from the bounce-proof step 0.
+    // One manual fix applied: strafeLinear was fitted as -0.0504 — a
+    // negative linear brake coefficient can produce an imaginary braking
+    // speed — clamped to 0.01.
+    public static ForesightConfig foresightConfig = new ForesightConfig(
+            c -> {
+                Controller primaryTranslationalForward = Controller.proportional(2.544133433929248);
+                Controller secondaryTranslationalForward = Controller.proportional(0.9399893233394881);
+                Controller primaryTranslationalLateral = Controller.proportional(0.9482677459839527);
+                Controller secondaryTranslationalLateral = Controller.proportional(0.35035959396023786);
 
-        c.forwardTranslational.set(Controller.piecewise(secondaryTranslationalForward).put(2.5, primaryTranslationalForward));
-        c.strafeTranslational.set(Controller.piecewise(secondaryTranslationalLateral).put(2.5, primaryTranslationalLateral));
+                c.forwardTranslational.set(Controller.piecewise(secondaryTranslationalForward).put(2.5, primaryTranslationalForward));
+                c.strafeTranslational.set(Controller.piecewise(secondaryTranslationalLateral).put(2.5, primaryTranslationalLateral));
+                c.coast.set(Controller.proportionalFeedforward(0.014520331493896447));
+                c.brake.set(Controller.proportionalFeedforward(0.01234228176981198));
 
-        c.coast.set(Controller.proportionalFeedforward(0.02));
-        c.brake.set(Controller.proportionalFeedforward(0.025));
+                // Heading gain, tuned empirically 2026-10-05:
+                //   9.45  -> saturates beyond 6 deg of error = bang-bang seizure
+                //   0.165 -> below static friction, no rotation at all
+                //   -1.0  + staticFF 0.1 -> proportional band ~+-57 deg,
+                //           feedforward pushes through friction near target.
+                // Negative sign: the rotation sign convention is flipped in
+                // the localizer->Foresight chain (see frame probe history).
+                // NOTE: all negative-gain testing ran with the yPod direction
+                // bug live. With yPod fixed, positive sign converges. 0.3
+                // tracked the .linear sweep too softly (rotation lagged the
+                // path = "move then turn"); 0.5 keeps rotation in step.
+                c.headingFeedback.set(Controller.proportional(0.5));
+                // If it stalls short of the target heading, add static
+                // friction feedforward here: c.headingStaticFF takes a
+                // Controller, e.g. Controller.proportionalFeedforward(0.1)
+                c.headingBrakeCoefficients.set(Vector2D.cartesian(0.09629034133863262, -0.002765392395272116));
 
-        c.headingFeedback.set(Controller.proportional(0.04));
+                c.linearBrakeCoefficients.set(Matrix.diag(0.1217654664399522, 0.01));
+                c.quadraticBrakeCoefficients.set(Matrix.diag(3.961044217824887E-4, 0.004067698781707838));
 
-        c.headingBrakeCoefficients.set(Vector2D.cartesian(0.5, 0.2));
-
-        c.linearBrakeCoefficients.set(Matrix.diag(0.2, 0.15));
-        c.quadraticBrakeCoefficients.set(Matrix.diag(0.05, 0.05));
-
-        c.maxAchievableForwardVelocity.set(40.0);
-        c.maxAchievableStrafeVelocity.set(25.0);
-        c.naturalForwardDeceleration.set(30.0);
-        c.naturalStrafeDeceleration.set(20.0);
-    });
+                c.maxAchievableForwardVelocity.set(80.9295009503824);
+                c.maxAchievableStrafeVelocity.set(69.83964272080335);
+                c.naturalForwardDeceleration.set(761.4730322127768);
+                c.naturalStrafeDeceleration.set(811.3685206465822);
+            }
+    );
 
     public static Follower create(HardwareMap h) {
         return new Follower(

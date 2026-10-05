@@ -15,6 +15,7 @@ import com.pedropathing.tuning.autotune.TuningOpMode;
 import com.pedropathing.utils.Angle;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -109,9 +110,15 @@ public class Tests extends Procedure {
                     throw new IllegalArgumentException("Drivetrain is required for Odometry Test.");
                 if (!localizer)
                     throw new IllegalArgumentException("Localizer is required for Odometry Test.");
-                completed = runOpMode(new TestsOdometry(drivetrainFunction, localizerFunction));
-                if (!completed)
-                    abort("Failed odometry test. Please check your odometry pods and ensure they are functioning correctly.");
+                String verdicts = runOpMode(new TestsOdometry(drivetrainFunction, localizerFunction));
+                if (verdicts == null) {
+                    abort("Odometry test stopped early — re-run it.");
+                } else {
+                    // surface the verdicts on the AutoTune page (laptop)
+                    result("Odometry verdicts", verdicts);
+                    code(Language.JAVA, "// Odometry test results:\n// " + verdicts);
+                }
+                completed = verdicts != null;
                 break;
             case POSE:
                 if (!localizer)
@@ -310,7 +317,7 @@ class TestsLocalization extends TuningOpMode<Boolean> {
     }
 }
 
-class TestsOdometry extends TuningOpMode<Boolean> {
+class TestsOdometry extends TuningOpMode<String> {
     Function<HardwareMap, Drivetrain> drivetrainFunction;
     Function<HardwareMap, Localizer> localizerFunction;
 
@@ -332,15 +339,17 @@ class TestsOdometry extends TuningOpMode<Boolean> {
     private boolean passedX = false;
     private boolean passedY = false;
     private boolean passedHeading = false;
+    private String verdictX = "?", verdictY = "?", verdictH = "?";
+    private Pose lastPose = Pose.zero();
 
     public TestsOdometry(Function<HardwareMap, Drivetrain> drivetrainFunction, Function<HardwareMap, Localizer> localizerFunction) {
-        super("Localization Test", "Verifies localization and manual control.", true);
+        super("Odometry Test", "Self-drives forward, left, then turns — then reports xPod/yPod/Heading direction verdicts. Just press START; no stick input.", true);
         this.drivetrainFunction = drivetrainFunction;
         this.localizerFunction = localizerFunction;
     }
 
     @Override
-    public Boolean runTuningOpMode() throws InterruptedException {
+    public String runTuningOpMode() throws InterruptedException {
         Localizer localizer = localizerFunction.apply(hardwareMap);
         Drivetrain drivetrain = drivetrainFunction.apply(hardwareMap);
 
@@ -395,6 +404,7 @@ class TestsOdometry extends TuningOpMode<Boolean> {
                     telemetry.addData("Test", "Completed");
 
                     Pose pose = localizer.pose();
+                    lastPose = pose;
 
                     if (pose.x() < 0)
                         telemetry.addData("xPod Direction", "Flipped");
@@ -429,13 +439,26 @@ class TestsOdometry extends TuningOpMode<Boolean> {
                         passedHeading = true;
                     }
 
+                    // string verdicts for the AutoTune page / logcat
+                    verdictX = passedX ? "Good"
+                            : pose.x() < 0 ? "FLIPPED" : pose.x() < 2 ? "resTooHigh" : "resTooLow";
+                    verdictY = passedY ? "Good"
+                            : pose.y() < 0 ? "FLIPPED" : pose.y() < 2 ? "resTooHigh" : "resTooLow";
+                    verdictH = passedHeading ? "Good"
+                            : totalHeading < 0 ? "FLIPPED" : totalHeading < 0.02 ? "resTooHigh" : "resTooLow";
+
                     break;
             }
 
             telemetry.addData("Pose", localizer.pose());
             telemetry.update();
         }
-        return passedX && passedY && passedHeading;
+        String summary = String.format(
+                "xPod=%s | yPod=%s | Heading=%s | pose(x=%.1f, y=%.1f) | totalHeading=%.1f deg",
+                verdictX, verdictY, verdictH,
+                lastPose.x(), lastPose.y(), Math.toDegrees(totalHeading));
+        RobotLog.ii("KingsleyOC", "ODOMETRY VERDICTS: " + summary);
+        return summary;
     }
 }
 
