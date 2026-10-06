@@ -74,11 +74,10 @@ public class Constants {
                 //           feedforward pushes through friction near target.
                 // Negative sign: the rotation sign convention is flipped in
                 // the localizer->Foresight chain (see frame probe history).
-                // NOTE: all negative-gain testing ran with the yPod direction
-                // bug live. With yPod fixed, positive sign converges. 0.3
-                // tracked the .linear sweep too softly (rotation lagged the
-                // path = "move then turn"); 0.5 keeps rotation in step.
-                c.headingFeedback.set(Controller.proportional(0.5));
+                // Positive sign converges (post yPod-fix). Tracking a heading
+                // ramp has steady-state lag ∝ rampRate/gain: 0.5 lagged ~20
+                // deg behind the sweep. 0.8 closes most of it.
+                c.headingFeedback.set(Controller.proportional(0.8));
                 // If it stalls short of the target heading, add static
                 // friction feedforward here: c.headingStaticFF takes a
                 // Controller, e.g. Controller.proportionalFeedforward(0.1)
