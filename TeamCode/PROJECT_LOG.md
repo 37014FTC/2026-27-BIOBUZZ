@@ -1,6 +1,4 @@
 # PROJECT LOG — The Three-Day Robot Saga
-*Kingsley, solo, holiday weekend. Teammates on a beach somewhere.*
-
 ---
 
 ## TL;DR
