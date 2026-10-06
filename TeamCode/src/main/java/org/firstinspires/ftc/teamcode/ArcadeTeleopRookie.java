@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  *   Right stick X -> turn left / right
  *   Hold A        -> slow mode (40% of the cap)
  */
-@TeleOp(name="Kingsley_ArcadeRookie")
+@TeleOp(name="37014_ArcadeRookie")
 public class ArcadeTeleopRookie extends LinearOpMode {
 
     static final double SLOW_MODE_FACTOR = 0.4;

@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * This is the " FPS" scheme: sticks move the robot in any direction
  * without rotating it; bumpers rotate. Raw motor control, no Pedro.
  */
-@TeleOp(name="Kingsley_JoystickTeleop")
+@TeleOp(name="37014_JoystickTeleop")
 public class JoystickTeleop extends LinearOpMode {
 
     static final double SLOW_MODE_FACTOR = 0.4;

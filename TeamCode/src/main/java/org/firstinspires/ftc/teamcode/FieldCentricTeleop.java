@@ -24,7 +24,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * the IMU calibrates then). Face the robot "north" (typically toward the
  * field, away from the driver) before initializing.
  */
-@TeleOp(name="Kingsley_FieldCentric")
+@TeleOp(name="37014_FieldCentric")
 public class FieldCentricTeleop extends LinearOpMode {
 
     static final double SLOW_MODE_FACTOR = 0.4;

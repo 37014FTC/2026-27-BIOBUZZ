@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  *
  * Face the robot "north" and keep it STILL during INIT.
  */
-@TeleOp(name="Kingsley_FieldRookie")
+@TeleOp(name="37014_FieldRookie")
 public class FieldCentricTeleopRookie extends LinearOpMode {
 
     static final double SLOW_MODE_FACTOR = 0.4;

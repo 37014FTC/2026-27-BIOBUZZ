@@ -16,22 +16,22 @@ of them: **one backwards-counting odometry pod.**
 - **(0, 0) = center of the field**, units = **feet** (field is ±6 ft each way)
 - +X = north (away from driver wall at heading 0), +Y = WEST (left)
 - Heading 0 = north, CCW positive (Pinpoint convention)
-- Frame verified empirically by `Kingsley_FrameProbe`
+- Frame verified empirically by `37014_FrameProbe`
 
 ---
 
 ## Day 1 — Making It Move & Measuring the World
 
 ### Programs built
-- `Kingsley_FBSTest` — timed forward/back/spin + strafe. The beginning of
+- `37014_FBSTest` — timed forward/back/spin + strafe. The beginning of
   everything. Taught the mecanum wheel-sign cheat sheet:
   forward `++++`, spin `++--`, strafe-right `+--+` (per side FL/BL/FR/BR).
-- `Kingsley_OdometryRuler` — push robot A→B, read distance from the
+- `37014_OdometryRuler` — push robot A→B, read distance from the
   goBILDA Pinpoint. Originally read the pods as hub motors; **rewritten**
   when we learned the pods plug into the Pinpoint over I2C.
-- `Kingsley_Modes` — gamepad-selectable routines incl. slide-until-touch
+- `37014_Modes` — gamepad-selectable routines incl. slide-until-touch
   with odometry-guided return (first closed-loop code).
-- `Kingsley_MotorTest` — X/A/Y/B spins one motor each; the tool that
+- `37014_MotorTest` — X/A/Y/B spins one motor each; the tool that
   settled every "which wheel is lying" argument.
 
 ### Calibration archaeology
@@ -86,9 +86,9 @@ And `follower.stop()` alone leaves the last wheel powers **latched** —
 robot spun forever after the program ended → explicit
 `drivetrain.drive(zero, true)` at every ending since.
 
-### Wrong theories (killed by observation, mostly Kingsley's)
+### Wrong theories (killed by observation, mostly the captain's)
 1. "Pedro's Y axis is right-positive" → robot sailed NORTHEAST for
-   NORTHWEST. (Kingsley: "I wanted it to go northWEST, not northEAST" —
+   NORTHWEST. (The captain: "I wanted it to go northWEST, not northEAST" —
    the single most valuable sentence of the project.)
 2. "Heading units are degrees not radians" → 0.165 gain.
 3. "Pinpoint firmware doesn't report angular velocity" → hand-spin test
@@ -98,11 +98,11 @@ robot spun forever after the program ended → explicit
    re-verification: all four correct.
 5. "The stock odometry test page shows nothing" → it never emits
    `result()`; rebuilt it to print verdicts to the AutoTune page AND to
-   logcat (tag `KingsleyOC`, read from the laptop over the USB cable
+   logcat (tag `37014OC`, read from the laptop over the USB cable
    with adb — results literally pulled through the wire).
 
 ### The root cause
-`Kingsley_OdometryCheck` (standalone, crash-proof, adb-logged) measured:
+`37014_OdometryCheck` (standalone, crash-proof, adb-logged) measured:
 +strafe command → robot slides LEFT (verified from behind the robot,
 vantage matters!) → localizer reads **y = −23.4**. Left must be +y.
 **The Y pod was direction-flipped in the Pedro config.** Fix:
@@ -115,17 +115,17 @@ Foresight's velocity fusion went insane. With honest odometry:
 conclusions were void.
 
 ### Victory
-`Kingsley_DiagonalNW` final form: NW diagonal, 90° clockwise **in flight**
+`37014_DiagonalNW` final form: NW diagonal, 90° clockwise **in flight**
 (heading sweep front-loaded to 70% of the path — rotation must finish
 before arrival per the win condition: no rotation at endpoints), clean
 motor-off ending. **IT GOT THERE.** Minor cosmetic stutter remains
 (measured translational gains are path-hot; scale down someday if needed).
 
 ### Add-ons
-- `Kingsley_DiagonalNW_x2` — the mission chained twice (zigzag). Worked;
+- `37014_DiagonalNW_x2` — the mission chained twice (zigzag). Worked;
   landed ~20° short per rep → diagnosed as ramp-tracking lag
   (∝ rampRate/gain) → gain 0.8. Untested at time of writing.
-- `Kingsley_ABC` — A→B (NW + in-flight 90°) → C (forward drive east to
+- `37014_ABC` — A→B (NW + in-flight 90°) → C (forward drive east to
   the point north of A). Written, never run.
 
 ---
@@ -134,19 +134,19 @@ motor-off ending. **IT GOT THERE.** Minor cosmetic stutter remains
 
 | OpMode | Scheme | Cap |
 |---|---|---|
-| `Kingsley_TankTeleop` | sticks = tracks, trigger strafe | 80% |
-| `Kingsley_JoystickTeleop` | L drive, R slide, bumpers turn | 80% |
-| `Kingsley_ArcadeTeleop` | L stick holonomic (+diagonals), R turn | 100% |
-| `Kingsley_ArcadeRookie` | same, rookie cap | 80% |
-| `Kingsley_FieldCentric` | field-centric via Pinpoint heading | 100% |
-| `Kingsley_FieldRookie` | same, rookie cap | 80% |
-| `Kingsley_FieldMacro` | field-centric + waypoint macros | 100% |
+| `37014_TankTeleop` | sticks = tracks, trigger strafe | 80% |
+| `37014_JoystickTeleop` | L drive, R slide, bumpers turn | 80% |
+| `37014_ArcadeTeleop` | L stick holonomic (+diagonals), R turn | 100% |
+| `37014_ArcadeRookie` | same, rookie cap | 80% |
+| `37014_FieldCentric` | field-centric via Pinpoint heading | 100% |
+| `37014_FieldRookie` | same, rookie cap | 80% |
+| `37014_FieldMacro` | field-centric + waypoint macros | 100% |
 
 All: A-button slow mode (40%), brake stops, `scale()` =
 **clamp-then-scale** so combined inputs (drive+turn = wheel power 2.0)
 cap at MAX_POWER instead of clipping back to 1.0.
 
-### `Kingsley_FieldMacro` — the flagship
+### `37014_FieldMacro` — the flagship
 - Field-absolute coordinates: **center = (0,0), feet**, re-based at INIT
   via `setPosition` with the declared start pose.
 - **X button** → autonomous P-seek to waypoint (hand-rolled, the pre-Pedro

@@ -25,7 +25,7 @@ import static com.pedropathing.api.Paths.line;
  * algorithm) handles all the mixing and correction internally —
  * see pedro/Constants.java for the hardware configuration.
  */
-@Autonomous(name="Kingsley_DiagonalNW")
+@Autonomous(name="37014_DiagonalNW")
 public class DiagonalNW extends LinearOpMode {
 
     static final double TARGET_DISTANCE_IN = 12;

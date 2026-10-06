@@ -17,7 +17,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * Raw motor control — no Pedro/follower involved, so tuning state
  * doesn't affect teleop. Brake mode = crisp stops when sticks release.
  */
-@TeleOp(name="Kingsley_TankTeleop")
+@TeleOp(name="37014_TankTeleop")
 public class TankTeleop extends LinearOpMode {
 
     static final double SLOW_MODE_FACTOR = 0.4;

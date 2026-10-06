@@ -27,7 +27,7 @@ import static com.pedropathing.api.Paths.line;
  *   rep 2 (local frame): travel its-NW = field NE, end facing field-south
  * Net path on the floor: a NW-then-NE zigzag.
  */
-@Autonomous(name="Kingsley_DiagonalNW_x2")
+@Autonomous(name="37014_DiagonalNW_x2")
 public class DiagonalTwice extends LinearOpMode {
 
     static final double TARGET_DISTANCE_IN = 12;

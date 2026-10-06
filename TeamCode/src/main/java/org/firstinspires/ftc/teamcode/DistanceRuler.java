@@ -22,7 +22,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit
  *   3. Read "DISTANCE A to B" on the Driver Station.
  *   4. Press A on gamepad 1 any time to re-zero for a new measurement.
  */
-@TeleOp(name="Kingsley_OdometryRuler")
+@TeleOp(name="37014_OdometryRuler")
 public class DistanceRuler extends LinearOpMode {
 
     // Pod offsets from the robot's center, in mm (measured on our U-shape

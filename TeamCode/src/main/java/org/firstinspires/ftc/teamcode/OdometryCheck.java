@@ -23,11 +23,11 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
  *   xPod / yPod / Heading — each Good or Flipped (+ resolution notes).
  * Reads verdicts on the Driver Station. Press STOP when done.
  */
-@Autonomous(name="Kingsley_OdometryCheck")
+@Autonomous(name="37014_OdometryCheck")
 public class OdometryCheck extends LinearOpMode {
 
     static final double POWER = 0.5;
-    static final String TAG = "KingsleyOC";   // laptop log tag — readable via adb
+    static final String TAG = "37014OC";   // laptop log tag — readable via adb
 
     @Override
     public void runOpMode() {

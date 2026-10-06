@@ -27,7 +27,7 @@ import static com.pedropathing.api.Paths.line;
  * No rotation at A, B, or C: all rotation happens during leg 1 travel.
  * Final telemetry shows the pose — score is x~8.5, y~0, heading ~-90.
  */
-@Autonomous(name="Kingsley_ABC")
+@Autonomous(name="37014_ABC")
 public class ABCPath extends LinearOpMode {
 
     static final double TARGET_DISTANCE_IN = 12;   // A->B diagonal length

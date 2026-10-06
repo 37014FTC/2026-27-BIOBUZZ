@@ -28,10 +28,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
  *           side of the robot that will bump the wall while sliding
  *   odometry: "pp" — the goBILDA Pinpoint
  */
-@Autonomous(name="Kingsley_Modes")
+@Autonomous(name="37014_Modes")
 public class DriveModes extends LinearOpMode {
 
-    // Pinpoint setup — same values as Kingsley_OdometryRuler
+    // Pinpoint setup — same values as 37014_OdometryRuler
     static final double X_POD_OFFSET_MM = -50;  // X pod is RIGHT of center
     static final double Y_POD_OFFSET_MM = -30;  // Y pod is BEHIND center
 

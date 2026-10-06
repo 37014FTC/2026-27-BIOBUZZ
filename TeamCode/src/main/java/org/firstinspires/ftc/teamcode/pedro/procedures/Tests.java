@@ -457,7 +457,7 @@ class TestsOdometry extends TuningOpMode<String> {
                 "xPod=%s | yPod=%s | Heading=%s | pose(x=%.1f, y=%.1f) | totalHeading=%.1f deg",
                 verdictX, verdictY, verdictH,
                 lastPose.x(), lastPose.y(), Math.toDegrees(totalHeading));
-        RobotLog.ii("KingsleyOC", "ODOMETRY VERDICTS: " + summary);
+        RobotLog.ii("37014OC", "ODOMETRY VERDICTS: " + summary);
         return summary;
     }
 }

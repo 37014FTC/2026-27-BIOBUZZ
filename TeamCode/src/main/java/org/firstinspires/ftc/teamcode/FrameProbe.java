@@ -20,7 +20,7 @@ import static com.pedropathing.api.Paths.line;
  * Tell someone (me) those two answers and the whole coordinate system is
  * known — no more guessing.
  */
-@Autonomous(name="Kingsley_FrameProbe")
+@Autonomous(name="37014_FrameProbe")
 public class FrameProbe extends LinearOpMode {
 
     static final double PROBE_DISTANCE_IN = 24;

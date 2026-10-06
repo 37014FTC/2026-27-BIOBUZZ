@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * to go straight, opposite powers to spin). Mecanum wheels additionally
  * allow strafing (sliding sideways), provided by the strafe() method below.
  */
-@Autonomous(name="Kingsley_FBSTest")
+@Autonomous(name="37014_FBSTest")
 public class ForwardBackSpin extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();

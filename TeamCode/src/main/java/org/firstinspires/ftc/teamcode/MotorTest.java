@@ -20,7 +20,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  *   - Right wheel, backward? That motor needs its direction flipped in
  *     code (DiagonalNW and the Pedro MecanumConfig).
  */
-@TeleOp(name="Kingsley_MotorTest")
+@TeleOp(name="37014_MotorTest")
 public class MotorTest extends LinearOpMode {
 
     static final double TEST_POWER = 0.3;

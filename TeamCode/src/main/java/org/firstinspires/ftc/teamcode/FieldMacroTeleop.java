@@ -35,7 +35,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
  * SETUP: at INIT the robot is TOLD its starting coordinates (constants
  * below) — place the robot on its start mark facing north before INIT.
  */
-@TeleOp(name="Kingsley_FieldMacro")
+@TeleOp(name="37014_FieldMacro")
 public class FieldMacroTeleop extends LinearOpMode {
 
     // ---- field setup (FEET / DEGREES — edit these) ----
