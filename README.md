@@ -1,97 +1,47 @@
-# 🤖 37014 FTC — Team Code
+# 🤖 FRC-style documentation, FTC-sized team — Team 37014
 
-This is our robot's brain. Everything the robot does lives here: the
-driver controls, the autonomous missions, and the settings that make it
-all work.
+**FIRST Tech Challenge · 2026–27 BIOBUZZ season · Australia**
 
-**New here? Read this page top to bottom. That's the whole briefing.**
+We are a small software-driven FTC team — three year-8 students who
+designed, built, programmed, tuned, and documented this robot ourselves,
+with mentor support on strategy and logistics. This repository is our
+robot's complete software system **and** our engineering record: every
+program, every decision, and every mistake we made learning them.
 
 ---
 
-## Robot words, in plain English
+## What's in this repository
 
-| Word | What it actually means |
+| Area | Contents |
 |---|---|
-| **OpMode** | One program for the robot. You pick it from a list on the Driver Station. |
-| **TeleOp** | A program where a human drives with gamepads. |
-| **Autonomous** | A program where the robot drives itself. |
-| **Deploy** | Copying our code from the laptop onto the robot. Happens every time we change code. |
-| **Driver Station (DS)** | The phone/app with the big INIT and START buttons. |
-| **Control Hub** | The big brick on the robot that runs everything. |
-| **Pinpoint** | The little board that always knows where the robot is (odometry). |
-| **INIT → START** | INIT = get ready (always press it first!). START = go. |
-| **STOP** | The panic button. Also ends seizures. |
+| **Driver controls** | Six teleop modes (tank, arcade, field-centric, waypoint-assisted), each with rookie/experienced power tiers and precision slow-mode |
+| **Autonomous** | Path-following missions using Pedro Pathing with odometry-localized mecanum drive — including in-motion heading sweeps and chained maneuvers |
+| **Waypoint macros** | A field-absolute coordinate system (field center = origin, feet units) with button-triggered autonomous repositioning during teleop and driver-frame re-zeroing |
+| **Tuning infrastructure** | A custom step-by-step replacement for the stock auto-tuner, with persistent results, sanity gates, and a vibration-tolerant heading-gain measurement method |
+| **Diagnostics** | Standalone motor, odometry, and coordinate-frame verification tools with laptop log streaming |
+| **Documentation** | `TeamCode/PROJECT_LOG.md` — the full engineering log, failures included |
+
+## Engineering highlights
+
+- **Root-cause odometry investigation.** A multi-day behavioral fault (path mirroring, unstable heading control) was traced to a single direction-inverted odometry pod in the localization config. The diagnosis path — isolating motors, verifying sensor data live, building a standalone frame probe — is documented step by step in PROJECT_LOG.md.
+- **Rebuilt tuning tooling when the stock tools failed.** The stock tuner lost all results on early exit and its heading fit diverged on chassis vibration; we wrote a replacement that persists results per-step to the robot, validates outputs against physical sanity ranges, and measures heading response with a method robust to signal noise.
+- **Safety-first control design.** All driver-assist autonomy features obey three rules: any manual input instantly overrides, every autonomous action is time-bounded, and mode state is always visible to the driver.
+- **Measured, not guessed.** All 17 motion-control parameters were identified empirically on the robot (velocities, braking profiles, rotational response) and validated against physics consistency checks.
+
+## For judges & visitors
+
+- **[`TeamCode/PROJECT_LOG.md`](TeamCode/PROJECT_LOG.md)** — the complete three-day engineering log: the debugging journey, the wrong theories and what disproved them, the root cause, and ten process lessons. We kept the failures in on purpose.
+- **[`TeamCode/ROOKIE_GUIDE.md`](TeamCode/ROOKIE_GUIDE.md)** — how new members use this codebase (also shared with our organisation's junior teams).
+- **Git history** — dated, incremental evidence of the development process.
+
+## The team
+
+Team 37014 is the advanced team in a five-team organisation (junior,
+girls, eastern-division, and advanced programs) that shares knowledge,
+tooling, and this documentation approach. Our software was written
+solo by one year-8 student over a holiday weekend, then hardened
+through team testing sessions.
 
 ---
 
-## The programs (what to pick on the Driver Station)
-
-### 🎮 Driving (TeleOp section)
-
-| Name | What it does | Who it's for |
-|---|---|---|
-| `37014_ArcadeTeleop` | Left stick moves ANY direction, right stick turns | Main drivers |
-| `37014_FieldCentric` | Same but controls follow the field, not the robot | Main drivers |
-| `37014_FieldMacro` | Field-centric **+ press X to auto-drive to a spot** | Advanced |
-| `37014_TankTeleop` | One stick per side, like tank tracks | Old school |
-| `37014_ArcadeRookie` / `37014_FieldRookie` | Same as the big ones, but speed-limited | **You, probably** 😄 |
-
-**Every teleop:** hold **A** for slow mode. Trust us, use it indoors.
-
-### 🤖 Self-driving (Autonomous section)
-
-| Name | What it does |
-|---|---|
-| `37014_DiagonalNW` | Goes 1 ft diagonally northwest while rotating 90° — all in one motion |
-| `37014_DiagonalNW_x2` | Does that twice, zigzag style |
-| `37014_ABC` | Goes A → B (diagonal + rotate) → C |
-
-### 🔧 Tests (ask a year 8 before running these)
-
-| Name | What it does |
-|---|---|
-| `37014_MotorTest` | Spins one wheel at a time (X/A/Y/B) — **wheels off the floor!** |
-| `37014_OdometryRuler` | Push the robot by hand, it shows how far you went |
-| `37014_FrameProbe` / `37014_OdometryCheck` | Robot self-checks for diagnosing problems |
-
----
-
-## Rules of the road
-
-1. **First run of anything new = wheels off the floor.** Prop the robot on a block. Non-negotiable.
-2. **Never edit the numbers in `TeamCode/.../pedro/Constants.java` without a year 8.** That file is the robot's tuning — wrong numbers have caused *thousands* of seizures (see PROJECT_LOG.md, "The Hall of Seizures").
-3. **The robot once tried to enter an elevator by itself.** Watch it when it's self-driving. Finger near STOP. Always.
-4. If a program crashes, the Driver Station shows a red message — screenshot it and tell a year 8.
-
----
-
-## Getting the code (for your own laptop)
-
-1. Ask a year 8 to add your GitHub account to the team repo (Settings → Collaborators).
-2. Click the green **Code** button → **Open with GitHub Desktop** (or copy the link).
-3. Open the folder in **Android Studio** (free). First sync needs internet — let it finish, it takes ages. That's normal.
-
-To put code on the robot: USB cable from laptop to Control Hub → press the green **Run ▶** button in Android Studio. That's a "deploy."
-
----
-
-## Where the deep stuff lives
-
-- **`TeamCode/PROJECT_LOG.md`** — the full story of how this robot went from
-  "how does it move" to what it is now, including every mistake. Genuinely
-  worth reading, even (especially) the failure parts.
-- **`TeamCode/src/main/java/org/firstinspires/ftc/teamcode/`** — all our
-  programs. Names start with `37014_`.
-- **`TeamCode/src/main/java/org/firstinspires/ftc/teamcode/pedro/Constants.java`**
-  — the robot's tuning (see rule 2).
-
-## Who to ask
-
-The year 8s — one of them is the software captain who built this repo. No
-question is too basic — nobody on this team knew what an OpMode was a
-week ago either.
-
----
-
-*Last updated: Oct 2026. If this page is wrong, fixing it is your first
-open-source contribution. 🎉*
+*Contact: via our GitHub organisation, 37014FTC.*
