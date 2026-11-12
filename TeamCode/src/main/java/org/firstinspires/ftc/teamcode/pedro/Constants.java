@@ -77,7 +77,10 @@ public class Constants {
                 // Positive sign converges (post yPod-fix). Tracking a heading
                 // ramp has steady-state lag ∝ rampRate/gain: 0.5 lagged ~20
                 // deg behind the sweep. 0.8 closes most of it.
-                c.headingFeedback.set(Controller.proportional(0.8));
+                // 0.5 = last value validated on DiagonalNW (Oct 5).
+                // 0.8 was bumped for the x2 lag on Oct 6 and never tested —
+                // prime suspect for the Nov seizures. Reverted.
+                c.headingFeedback.set(Controller.proportional(0.5));
                 // If it stalls short of the target heading, add static
                 // friction feedforward here: c.headingStaticFF takes a
                 // Controller, e.g. Controller.proportionalFeedforward(0.1)
